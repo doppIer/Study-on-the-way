@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study on the Way</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07080a;
+  --panel: #0d0f13;
+  --line: #1c2027;
+  --text: #eceef2;
+  --mute: #8a93a0;
+  --blue: #4c8dff;
+  --blue-deep: #0c2c6e;
+  --bad: #ff7a6e;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--text);
+  font: 400 16px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+.nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  width: min(1040px, calc(100% - 24px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px 10px 20px;
+  background: rgba(15, 17, 21, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; }
+.brand svg { width: 22px; height: 22px; }
+.nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; color: var(--mute); font-size: 15px; }
+.nav ul a { text-decoration: none; }
+.nav ul a:hover { color: var(--text); }
+.btn {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 10px;
+  background: var(--text);
+  color: #0b0d10;
+  font: 500 15px/1.2 var(--sans);
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+}
+.btn:hover { background: #fff; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.btn.ghost:hover { border-color: #323944; background: #11141a; }
+.btn:focus-visible, a:focus-visible, button:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.hero { max-width: 1040px; margin: 0 auto; padding: 150px 24px 72px; }
+.hero h1 {
+  margin: 0;
+  max-width: 14ch;
+  font: 600 clamp(44px, 8vw, 84px)/1.02 var(--sans);
+  letter-spacing: -0.035em;
+}
+.hero h1 span { color: var(--mute); }
+.hero p { margin: 24px 0 0; max-width: 52ch; color: var(--mute); font-size: 19px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.bento {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.cell {
+  position: relative;
+  padding: 32px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background-image: radial-gradient(circle, #1b1f26 1px, transparent 1px);
+  background-size: 18px 18px;
+  min-width: 0;
+}
+.c7 { grid-column: span 7; }
+.c5 { grid-column: span 5; }
+.c4 { grid-column: span 4; }
+.c12 { grid-column: span 12; }
+.fig { font: 400 11px/1 var(--mono); color: #596270; letter-spacing: 0.04em; margin: 0 0 20px; }
+.cell h2 { margin: 0 0 8px; font: 500 22px/1.25 var(--sans); letter-spacing: -0.01em; }
+.cell p.copy { margin: 0; color: var(--mute); font: 400 13.5px/1.7 var(--mono); max-width: 44ch; }
+.art { display: flex; align-items: center; justify-content: center; }
+.art svg { width: 100%; max-width: 420px; height: auto; }
+.feature { display: flex; flex-direction: column; justify-content: flex-end; min-height: 220px; }
+.drop {
+  display: block;
+  padding: 26px 20px;
+  background: var(--panel);
+  border: 1px dashed #343b46;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.drop:hover, .drop.over { border-color: var(--blue); background: #0f131a; }
+.drop:focus-within { outline: 2px solid var(--blue); outline-offset: 3px; }
+.drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.drop b { display: block; font-weight: 500; font-size: 17px; word-break: break-all; }
+.drop span { color: var(--mute); font-size: 14px; }
+fieldset { border: 0; padding: 0; margin: 22px 0 0; }
+legend { padding: 0; margin-bottom: 10px; color: var(--mute); font: 400 13px/1 var(--mono); }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; }
+.seg span {
+  display: inline-block;
+  padding: 8px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.seg span:hover { border-color: #323944; }
+.seg input:checked + span { border-color: var(--blue); background: #0e1626; color: #fff; }
+.seg input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+.len { display: flex; align-items: center; gap: 16px; }
+.len input { flex: 1; accent-color: var(--blue); }
+.len output { min-width: 64px; text-align: right; font: 500 15px/1 var(--mono); }
+button.go { width: 100%; margin-top: 28px; padding: 14px; font-size: 16px; }
+button.go:disabled { background: #3a414c; color: #8a93a0; cursor: wait; }
+#state { margin-top: 18px; min-height: 24px; font: 400 13.5px/1.5 var(--mono); color: var(--mute); }
+#state.err { color: var(--bad); }
+.bar { height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+.bar i { display: block; height: 100%; width: 35%; background: var(--blue); animation: slide 1.3s ease-in-out infinite; }
+@keyframes slide { from { margin-left: -35%; } to { margin-left: 100%; } }
+@media (prefers-reduced-motion: reduce) {
+  .bar i { animation: none; width: 100%; }
+  html { scroll-behavior: auto; }
+}
+#result { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+#result[hidden] { display: none; }
+#result h3 { margin: 0 0 6px; font: 500 22px/1.25 var(--sans); }
+#note { margin: 0 0 14px; color: var(--mute); font-size: 14px; }
+#note:empty { display: none; }
+audio { width: 100%; color-scheme: dark; }
+.dl { display: inline-block; margin-top: 12px; color: var(--blue); font-size: 14px; }
+details { margin-top: 20px; }
+summary { cursor: pointer; color: var(--mute); font: 400 13px/1.4 var(--mono); }
+#script { white-space: pre-wrap; max-width: 62ch; margin-top: 12px; color: #c4cad3; font-size: 15px; }
+.stack { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.stack span { padding: 8px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; font: 400 13px/1 var(--mono); }
+footer { max-width: 1040px; margin: 0 auto; padding: 28px 24px 64px; color: #596270; font: 400 12px/1.5 var(--mono); }
+@media (max-width: 860px) {
+  .nav ul { display: none; }
+  .c7, .c5, .c4 { grid-column: span 12; }
+  .bento { border-left: 0; }
+  .cell { padding: 24px 20px; border-right: 0; }
+  .hero { padding-top: 120px; }
+}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="Main">
+  <a class="brand" href="#top">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z" fill="#0c2c6e" stroke="#4c8dff" stroke-width="1.5"/><path d="M10 9.5v5l4.2-2.5L10 9.5Z" fill="#4c8dff"/></svg>
+    Study on the Way
+  </a>
+  <ul>
+    <li><a href="#app">Create</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#stack">Built on AWS</a></li>
+  </ul>
+  <a class="btn" href="#app">Try it</a>
+</nav>
+
+<header class="hero" id="top">
+  <h1>Turn lecture notes into a podcast. <span>Listen on the way.</span></h1>
+  <p>Upload a PDF of your notes and get a spoken lesson in minutes, as one narrator or a two-host conversation, in Turkish or English.</p>
+  <div class="cta">
+    <a class="btn" href="#app">Create a podcast</a>
+    <a class="btn ghost" href="#how">How it works</a>
+  </div>
+</header>
+
+<main>
+  <div class="bento">
+    <section class="cell c7" id="app">
+      <p class="fig">FIG_01 / CREATE</p>
+      <h2>Your notes, as audio</h2>
+      <p class="copy">Drop a text-based PDF, pick a voice style and a length.</p>
+
+      <form id="form" style="margin-top:24px">
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept="application/pdf">
+          <b id="fname">Choose a PDF or drop it here</b>
+          <span id="fhint">Up to 4 MB. Text-based PDFs work best.</span>
+        </label>
+
+        <fieldset>
+          <legend>narration language</legend>
+          <div class="seg">
+            <label><input type="radio" name="lang" value="tr" checked><span>Türkçe</span></label>
+            <label><input type="radio" name="lang" value="en"><span>English</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>format</legend>
+          <div class="seg">
+            <label><input type="radio" name="mode" value="monolog" checked><span>Single narrator</span></label>
+            <label><input type="radio" name="mode" value="dialog"><span>Two hosts</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>length</legend>
+          <div class="len">
+            <input type="range" id="minutes" min="2" max="8" value="5" aria-label="Length in minutes">
+            <output id="mout" for="minutes">5 min</output>
+          </div>
+        </fieldset>
+
+        <button class="btn go" id="go" type="submit">Create podcast</button>
+      </form>
+
+      <div id="state" role="status" aria-live="polite"></div>
+
+      <section id="result" hidden>
+        <h3 id="title"></h3>
+        <p id="note"></p>
+        <audio id="player" controls></audio>
+        <a class="dl" id="dl" href="#" target="_blank" rel="noopener">Download the audio</a>
+        <details>
+          <summary>Read the transcript</summary>
+          <div id="script"></div>
+        </details>
+      </section>
+    </section>
+
+    <section class="cell c5 art" aria-hidden="true">
+      <svg viewBox="0 0 400 320">
+        <g transform="translate(0,44)">
+          <polygon points="200,70 320,130 200,190 80,130" fill="#0e1116" stroke="#2a3039"/>
+          <polygon points="80,130 200,190 200,206 80,146" fill="#090b0e" stroke="#20252d"/>
+          <polygon points="200,190 320,130 320,146 200,206" fill="#0b0d11" stroke="#20252d"/>
+        </g>
+        <g transform="translate(0,22)">
+          <polygon points="200,70 320,130 200,190 80,130" fill="#10141a" stroke="#2f3641"/>
+          <polygon points="80,130 200,190 200,206 80,146" fill="#0a0c10" stroke="#232932"/>
+          <polygon points="200,190 320,130 320,146 200,206" fill="#0d1015" stroke="#232932"/>
+        </g>
+        <g>
+          <polygon points="200,70 320,130 200,190 80,130" fill="#0c2c6e" stroke="#4c8dff"/>
+          <polygon points="80,130 200,190 200,206 80,146" fill="#0a2150" stroke="#2f62c0"/>
+          <polygon points="200,190 320,130 320,146 200,206" fill="#0d2a63" stroke="#2f62c0"/>
+          <line x1="134" y1="133" x2="194" y2="103" stroke="#8fb6ff" stroke-width="3" stroke-linecap="round"/>
+          <line x1="152" y1="142" x2="212" y2="112" stroke="#8fb6ff" stroke-width="3" stroke-linecap="round"/>
+          <line x1="170" y1="151" x2="230" y2="121" stroke="#8fb6ff" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+        </g>
+        <circle cx="262" cy="70" r="3" fill="#4c8dff"/>
+        <circle cx="282" cy="80" r="3" fill="#4c8dff" opacity="0.7"/>
+        <circle cx="302" cy="90" r="3" fill="#4c8dff" opacity="0.4"/>
+        <g stroke="#4c8dff" stroke-width="3" stroke-linecap="round" opacity="0.55">
+          <line x1="130" y1="296" x2="130" y2="304"/>
+          <line x1="146" y1="290" x2="146" y2="310"/>
+          <line x1="162" y1="284" x2="162" y2="316"/>
+          <line x1="178" y1="292" x2="178" y2="308"/>
+          <line x1="194" y1="280" x2="194" y2="320"/>
+          <line x1="210" y1="288" x2="210" y2="312"/>
+          <line x1="226" y1="284" x2="226" y2="316"/>
+          <line x1="242" y1="292" x2="242" y2="308"/>
+          <line x1="258" y1="297" x2="258" y2="303"/>
+        </g>
+      </svg>
+    </section>
+
+    <section class="cell c4 feature" id="how">
+      <p class="fig">FIG_02</p>
+      <h2>Drop in a PDF</h2>
+      <p class="copy">Your file goes straight to a private S3 bucket and is deleted as soon as the audio is ready.</p>
+    </section>
+
+    <section class="cell c4 feature">
+      <p class="fig">FIG_03</p>
+      <h2>A script made for listening</h2>
+      <p class="copy">Amazon Bedrock writes a spoken lesson of 2 to 8 minutes. If Bedrock is unavailable, your notes are read aloud instead.</p>
+    </section>
+
+    <section class="cell c4 feature">
+      <p class="fig">FIG_04</p>
+      <h2>Two voices, one lesson</h2>
+      <p class="copy">Amazon Polly records the MP3 and uses two distinct voices when you pick the two-host format.</p>
+    </section>
+
+    <section class="cell c12" id="stack">
+      <p class="fig">FIG_05 / ARCHITECTURE</p>
+      <h2>Serverless on AWS</h2>
+      <p class="copy" style="max-width:70ch">One Lambda Function URL serves this page and the API. Uploads use presigned S3 URLs, a worker Lambda does the heavy lifting, and DynamoDB tracks each job. Files expire after one day and the app allows 100 podcasts per day.</p>
+      <div class="stack">
+        <span>Lambda Function URL</span>
+        <span>Amazon S3</span>
+        <span>Amazon DynamoDB</span>
+        <span>Amazon Bedrock</span>
+        <span>Amazon Polly</span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>Built for the AWS Zero to Shipped hackathon.</footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const MAX = 4 * 1024 * 1024;
+
+$("#minutes").addEventListener("input", (e) => {
+  $("#mout").textContent = e.target.value + " min";
+});
+
+$("#file").addEventListener("change", showFile);
+
+["dragover", "dragenter"].forEach((n) =>
+  $("#drop").addEventListener(n, (e) => {
+    e.preventDefault();
+    $("#drop").classList.add("over");
+  })
+);
+["dragleave", "drop"].forEach((n) =>
+  $("#drop").addEventListener(n, () => $("#drop").classList.remove("over"))
+);
+$("#drop").addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) {
+    $("#file").files = e.dataTransfer.files;
+    showFile();
+  }
+});
+
+function showFile() {
+  const f = $("#file").files[0];
+  if (!f) return;
+  $("#fname").textContent = f.name;
+  $("#fhint").textContent = (f.size / 1048576).toFixed(1) + " MB";
+}
+
+function setState(msg, kind) {
+  const el = $("#state");
+  el.className = kind === "err" ? "err" : "";
+  el.textContent = msg;
+  if (kind === "busy") {
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    bar.appendChild(document.createElement("i"));
+    el.appendChild(bar);
+  }
+}
+
+async function call(path, method, data) {
+  const opts = { method, headers: {} };
+  if (data) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(data);
+  }
+  const r = await fetch(path, opts);
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || "Something went wrong.");
+  return j;
+}
+
+function wait(ms) {
+  return new Promise((res) => setTimeout(res, ms));
+}
+
+async function poll(id, t0) {
+  while (true) {
+    await wait(3000);
+    const s = await call("/api/status?id=" + id, "GET");
+    if (s.status === "done") return s;
+    if (s.status === "error") throw new Error(s.error);
+    const sec = Math.round((Date.now() - t0) / 1000);
+    setState("Writing and recording your podcast. Elapsed: " + sec + " s", "busy");
+  }
+}
+
+$("#form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = $("#file").files[0];
+  if (!f) return setState("Choose a PDF first.", "err");
+  if (f.type !== "application/pdf") return setState("Only PDF files are supported.", "err");
+  if (f.size > MAX) return setState("The PDF cannot be larger than 4 MB.", "err");
+
+  $("#go").disabled = true;
+  $("#result").hidden = true;
+  $("#player").pause();
+  const t0 = Date.now();
+  try {
+    setState("Uploading PDF", "busy");
+    const up = await call("/api/upload", "POST", {});
+    const put = await fetch(up.url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/pdf" },
+      body: f,
+    });
+    if (!put.ok) throw new Error("The PDF could not be uploaded.");
+    await call("/api/start", "POST", {
+      id: up.id,
+      lang: document.querySelector("input[name=lang]:checked").value,
+      mode: document.querySelector("input[name=mode]:checked").value,
+      minutes: Number($("#minutes").value),
+    });
+    setState("Writing and recording your podcast. Elapsed: 0 s", "busy");
+    const s = await poll(up.id, t0);
+    $("#title").textContent = s.title;
+    $("#note").textContent = s.note || "";
+    $("#player").src = s.audio;
+    $("#dl").href = s.audio;
+    $("#script").textContent = s.script;
+    $("#result").hidden = false;
+    setState("Ready. Enjoy the lesson.");
+    $("#player").scrollIntoView({ behavior: "smooth", block: "center" });
+  } catch (err) {
+    setState(err.message, "err");
+  } finally {
+    $("#go").disabled = false;
+  }
+});
+</script>
+</body>
+</html>

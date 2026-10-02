@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Ders notu PDF'inden sesli podcast uretir
+
+Parameters:
+  BedrockRegion:
+    Type: String
+    Default: eu-north-1
+  ModelId:
+    Type: String
+    Default: eu.amazon.nova-lite-v1:0
+  DailyLimit:
+    Type: Number
+    Default: 100
+
+Globals:
+  Function:
+    Runtime: python3.13
+    CodeUri: src/
+    Architectures:
+      - arm64
+    MemorySize: 512
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${AWS::StackName}-${AWS::AccountId}-${AWS::Region}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - PUT
+              - GET
+            AllowedOrigins:
+              - "*"
+            AllowedHeaders:
+              - "*"
+            MaxAge: 3000
+      LifecycleConfiguration:
+        Rules:
+          - Id: temizle
+            Status: Enabled
+            ExpirationInDays: 1
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: exp
+        Enabled: true
+
+  WorkerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: worker.handler
+      Timeout: 300
+      Environment:
+        Variables:
+          BUCKET: !Sub "${AWS::StackName}-${AWS::AccountId}-${AWS::Region}"
+          TABLE: !Ref Table
+          MODEL_ID: !Ref ModelId
+          BEDROCK_REGION: !Ref BedrockRegion
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+                - s3:DeleteObject
+              Resource: !Sub "arn:aws:s3:::${AWS::StackName}-${AWS::AccountId}-${AWS::Region}/*"
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+                - bedrock:InvokeModelWithResponseStream
+              Resource: "*"
+            - Effect: Allow
+              Action:
+                - polly:SynthesizeSpeech
+              Resource: "*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Table
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler
+      Timeout: 30
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          BUCKET: !Sub "${AWS::StackName}-${AWS::AccountId}-${AWS::Region}"
+          TABLE: !Ref Table
+          WORKER: !Ref WorkerFunction
+          DAILY_LIMIT: !Ref DailyLimit
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource: !Sub "arn:aws:s3:::${AWS::StackName}-${AWS::AccountId}-${AWS::Region}/*"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Table
+        - LambdaInvokePolicy:
+            FunctionName: !Ref WorkerFunction
+
+  ApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunction
+      Principal: "*"
+      InvokedViaFunctionUrl: true
+
+Outputs:
+  SiteUrl:
+    Value: !GetAtt ApiFunctionUrl.FunctionUrl
